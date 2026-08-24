@@ -52,3 +52,7 @@ Desktop.ini
 !.env.example
 appsettings.Local.json
 appsettings.*.local.json
+
+# Pacote local para distribuição
+ARISE-RPG/
+ARISE-RPG.zip

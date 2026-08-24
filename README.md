@@ -20,7 +20,7 @@ ARISE é um RPG gráfico de progressão em que o jogador escolhe uma classe, atr
 
 O jogador deve vencer, em ordem, os dez monstros distribuídos por três níveis e um desafio final. Cada batalha é conduzida por `MotorDeTurnos`: jogador, monstro e eventual aliado agem segundo iniciativa; o jogador pode atacar, defender, usar habilidade, usar item ou fugir.
 
-Ao vencer, o personagem recebe a XP definida pelo monstro e participa do sorteio de sua tabela de drops. A XP pode elevar o nível e aumentar atributos; ao concluir uma fase, o jogador pode aprender uma habilidade correspondente ao nível alcançado. A vitória final acontece após derrotar Igris e avançar além do último nível da lista `dungeon`. A derrota ocorre quando a vida do jogador chega a zero. Uma fuga bem-sucedida produz `ResultadoCombate.FugaJogador` e encerra toda a partida na tela `FimDeJogo`; uma tentativa malsucedida consome o turno.
+Ao vencer, o personagem recebe a XP definida pelo monstro e participa do sorteio de sua tabela de drops. A XP pode elevar o nível e aumentar atributos; ao concluir uma fase, o jogador pode aprender uma habilidade correspondente ao nível alcançado. A tela de escolha apresenta nome, dano, custo de MP e elemento de cada opção. A vitória final acontece após derrotar Igris e avançar além do último nível da lista `dungeon`. A derrota ocorre quando a vida do jogador chega a zero. Uma fuga bem-sucedida produz `ResultadoCombate.FugaJogador` e encerra toda a partida na tela `FimDeJogo`; uma tentativa malsucedida consome o turno.
 
 ## 4. Como executar o projeto
 
@@ -49,7 +49,7 @@ Há um único `.csproj`, em `ARISE/ARISE.csproj`. Para baixar o projeto, clone o
 3. Selecione o projeto executável `ARISE`.
 4. Execute a configuração do projeto (Run).
 
-As pastas `Imagens/` e `Fontes/` são necessárias à apresentação. O `.csproj` copia esses recursos para o diretório de saída. As imagens PNG fornecem capa, seleção de classe e cenários/ilustrações dos monstros; as fontes TTF renderizam texto e emojis. `JogoRaylib.ResolverCaminhoImagem` procura primeiro ao lado do executável e depois no diretório corrente. Há fallback de fonte para `C:\Windows\Fonts\seguiemj.ttf`, o que cria dependência específica de Windows quando as fontes incluídas não forem encontradas.
+As pastas `Imagens/`, `Fontes/` e `Musicas/` são necessárias à apresentação. O `.csproj` copia esses recursos para os diretórios de saída e publicação. As imagens PNG fornecem capa, seleção de classe e ilustrações dos monstros; as fontes TTF renderizam texto e emojis; a faixa OGG é reproduzida continuamente como música de fundo a 25% do volume. `JogoRaylib.ResolverCaminhoRecurso` procura primeiro ao lado do executável e depois no diretório corrente. Há fallback de fonte para `C:\Windows\Fonts\seguiemj.ttf`, o que cria dependência específica de Windows quando as fontes incluídas não forem encontradas.
 
 ## 5. Controles e fluxo do jogo
 
@@ -82,8 +82,8 @@ No nível 1, `VidaMaxima = VidaBaseClasse + Fisico × Nivel` e `EnergiaMaxima = 
 | Classe | Elemento | HP inicial | MP inicial | Físico | Reflexo | Técnica | Foco | Armadura | Ataque usado |
 |---|---:|---:|---:|---:|---:|---:|---:|---:|---|
 | `Engineer` | Fairy | 23 | 23 | 3 | 3 | 8 | 3 | 3 | `Tecnica` |
-| `Arcanist` | Arcane | 16 | 33 | 2 | 3 | 4 | 8 | 2 | `Foco` |
-| `Phantom` | Undead | 19 | 17 | 3 | 9 | 3 | 2 | 1 | `Reflexo` |
+| `Arcanist` | Arcane | 16 | 34 | 2 | 3 | 4 | 9 | 2 | `Foco` |
+| `Phantom` | Undead | 19 | 17 | 3 | 10 | 4 | 2 | 1 | `Reflexo` |
 | `Vanguard` | Bestial | 38 | 12 | 8 | 3 | 2 | 2 | 5 | `Fisico` |
 
 - `Engineer`: possui a ação exclusiva `Reanimar`, que custa 15 MP e cria um `AliadoInvocado` com metade dos atributos do monstro derrotado. Começa com `Tiro Encantado` e `Descarga Arcana`.
@@ -112,7 +112,7 @@ flowchart LR
     Arcane -->|vence| Fairy
 ```
 
-No fluxo ativo, `CalculadoraDeDano` aplica o multiplicador ao dano base antes de subtrair a `ClasseDeArmadura`, calculada como `Armadura + Reflexo / 2` com divisão inteira. `MotorDeTurnos` acrescenta ao log `SUPER EFETIVO` e `+50% de Dano`, ou `POUCO EFETIVO` e `-50% de Dano`.
+No fluxo ativo, `CalculadoraDeDano` aplica o multiplicador ao dano base antes de subtrair a `ClasseDeArmadura`, calculada como `Armadura + Reflexo / 2` com divisão inteira. Nos ataques do jogador, aliado e monstros, `MotorDeTurnos` acrescenta ao log `SUPER EFETIVO` e `+50% de Dano`, ou `POUCO EFETIVO` e `-50% de Dano`.
 
 ## 8. Participantes, inimigos e chefes
 
@@ -120,18 +120,18 @@ No fluxo ativo, `CalculadoraDeDano` aplica o multiplicador ao dano base antes de
 
 | Fase | Inimigo | Elemento | Rank | HP/MP iniciais | Ataque/estratégia | XP |
 |---|---|---|---|---:|---|---:|
-| Nível 1 | `Spectrum` | Fairy | E | 19/16 | 20% `Confundir`; senão básico | 40 |
-| Nível 1 | `Zombie` | Undead | E | 28/7 | `AtaqueContagiante`: aplica Enfraquecido e recupera até 30% do dano em HP | 45 |
-| Nível 1 | `Driade` (chefe nominal) | Fairy | C | 58/27 | acima de 50%: 50/50 básico/ilusão; abaixo: básico | 120 |
-| Nível 2 | `Bugbear` | Bestial | C | 43/10 | básico; `GolpeSelvagem` quando Fúria ≥ 60 | 70 |
-| Nível 2 | `Golem` | Arcane | D | 52/22 | sempre `RaioDeEnergia` | 90 |
-| Nível 2 | `PackAncient` (chefe nominal) | Bestial | B | 92/19 | uiva uma vez com vida ≤ 40%; depois básico | 200 |
-| Nível 3 | `Orcus` | Undead | B | 111/23 | `DrenarVida`: recupera até 60% do dano em HP | 130 |
-| Nível 3 | `GreenWitch` | Fairy | B | 89/39 | sempre `MaldicaoEnfraquecedora` | 150 |
-| Nível 3 | `Sentinel` (chefe nominal) | Arcane | A | 195/42 | rompimento com escudo; recarrega após quebrar | 350 |
-| Final | `Igris` | Arcane | S | 425/72 | três fases e barreira | 600 |
+| Nível 1 | `Spectrum` | Fairy | E | 17/16 | 20% `Confundir`; senão básico | 40 |
+| Nível 1 | `Zombie` | Undead | E | 26/7 | `AtaqueContagiante`: aplica Enfraquecido e recupera até 30% do dano em HP | 45 |
+| Nível 1 | `Driade` (chefe nominal) | Fairy | C | 51/27 | acima de 50%: 50/50 básico/ilusão; abaixo: básico | 120 |
+| Nível 2 | `Bugbear` | Bestial | C | 38/10 | básico; `GolpeSelvagem` quando Fúria ≥ 60 | 70 |
+| Nível 2 | `Golem` | Arcane | D | 47/22 | sempre `RaioDeEnergia` | 90 |
+| Nível 2 | `PackAncient` (chefe nominal) | Bestial | B | 72/19 | uiva uma vez com vida ≤ 40%; depois básico | 200 |
+| Nível 3 | `Orcus` | Undead | B | 86/23 | `DrenarVida`: recupera até 60% do dano em HP | 130 |
+| Nível 3 | `GreenWitch` | Fairy | B | 69/39 | amaldiçoa uma vez; depois usa ataque básico | 150 |
+| Nível 3 | `Sentinel` (chefe nominal) | Arcane | A | 145/42 | `RompimentoArcano`, Técnica 14 e sem barreira | 350 |
+| Final | `Igris` | Arcane | S | 200/72 | três fases, Armadura 10 e uma recarga de barreira | 600 |
 
-O rótulo “chefe nominal” vem da posição/nome em `FabricaDungeon`; não existe uma classe ou interface `Chefe`. `Driade`, `PackAncient` e `Sentinel` têm mudanças condicionais, mas somente `Igris` mantém uma propriedade explícita `Fase`: fase 2 em vida ≤ 55% e fase 3 em vida ≤ 25%. As transições ocupam a ação do monstro. Sua barreira começa em 35, absorve dano e, zerada, leva à ação de recarga de 10 pontos; ataques são `RaioDeEnergia`, `RompimentoArcano` e `TempestadeArcanaFinal` nas fases 1, 2 e 3.
+O rótulo “chefe nominal” vem da posição/nome em `FabricaDungeon`; não existe uma classe ou interface `Chefe`. `Driade` e `PackAncient` têm mudanças condicionais, mas somente `Igris` mantém uma propriedade explícita `Fase`: fase 2 em vida ≤ 55% e fase 3 em vida ≤ 25%. As transições ocupam a ação do monstro. Apenas Igris possui uma barreira: ela começa com 35 pontos, é exibida abaixo do HP e pode realizar uma única recarga de 10 pontos quando zerada. Seus ataques são `RaioDeEnergia`, `RompimentoArcano` e `TempestadeArcanaFinal` nas fases 1, 2 e 3. O dano causado por esses ataques é elementalmente neutro para evitar uma diferença extrema entre as classes, mas ataques do jogador contra Igris ainda consideram seu elemento Arcane. Sentinel não possui mais barreira.
 
 ## 9. Sistema de combate
 
@@ -142,6 +142,7 @@ As cinco ações do jogador são ataque básico, defesa, habilidade, item e fuga
 Fórmula efetivamente usada por `MotorDeTurnos`:
 
 ```text
+danoBase do ataque básico = (Nivel - 1) × 3
 danoBase = habilidade.DanoBase + atacante.AtributoDeAtaque
 multiplicador = TabelaElemental(elemento do golpe, elemento do alvo)
 se Defendendo: multiplicador *= (100 - PercentualReducaoAoDefender) / 100
@@ -149,7 +150,7 @@ danoBruto = truncar(danoBase × multiplicador) - alvo.ClasseDeArmadura
 danoFinal = máximo(danoBruto + inteiro aleatório de -2 a +2, 1)
 ```
 
-Ataques especiais de monstros podem aplicar ainda multiplicadores de `MultiplicadoresDeAtaque`. Se o alvo estiver `Enfraquecido`, ataques de monstro recebem `1,2`. Vida nunca fica negativa, pois `ReceberDano` aplica `Math.Max(..., 0)`.
+Ataques especiais de monstros podem aplicar ainda multiplicadores de `MultiplicadoresDeAtaque`. Se o alvo estiver `Enfraquecido`, ataques de monstro recebem `1,2`. Como exceção de balanceamento do chefe final, os ataques de Igris ignoram vantagem e resistência elemental e usam multiplicador neutro `1,0`; a afinidade Arcane ainda vale quando ele recebe ataques. Vida nunca fica negativa, pois `ReceberDano` aplica `Math.Max(..., 0)`.
 
 `CalculadoraDeDano` é a fonte única do cálculo. Tanto `MotorDeTurnos` quanto `HabilidadeAtaque.Executar` delegam a ela, evitando fórmulas divergentes.
 
@@ -162,19 +163,19 @@ Ataques especiais de monstros podem aplicar ainda multiplicadores de `Multiplica
 | Engineer | 1 | Tiro Encantado 12/8/Fairy; Descarga Arcana 10/6/Arcane |
 | Engineer | 2 | Armadilha Espectral 25/15/Undead; Disparo Elemental 30/18/Arcane |
 | Engineer | 3 | Sintonia Feérica 45/25/Fairy; Projétil Necrótico 50/28/Undead |
-| Engineer | 4 | Canhão Arcano 80/40/Arcane; Fúria da Invocação 85/42/Bestial |
+| Engineer | 4 | Canhão Arcano 72/40/Arcane; Fúria da Invocação 77/42/Bestial |
 | Arcanist | 1 | Míssil Mágico 14/8/Arcane; Toque Espectral 12/6/Undead |
 | Arcanist | 2 | Explosão Mística 28/16/Arcane; Chama Feérica 26/14/Fairy |
 | Arcanist | 3 | Dreno de Alma 48/26/Undead; Orbe Arcano 52/28/Arcane |
-| Arcanist | 4 | Singularidade Arcana 88/42/Arcane; Furia Quimérica 82/38/Bestial |
+| Arcanist | 4 | Singularidade Arcana 79/42/Arcane; Furia Quimérica 74/38/Bestial |
 | Phantom | 1 | Golpe Sombrio 15/7/Undead; Passo Espectral 12/6/Arcane |
 | Phantom | 2 | Lâmina Necrótica 30/14/Undead; Bote Selvagem 28/12/Bestial |
 | Phantom | 3 | Corte Ilusório 50/24/Fairy; Sombra Perfurante 54/26/Undead |
-| Phantom | 4 | Execução Profana 86/38/Undead; Dança das Sombras 84/36/Arcane |
+| Phantom | 4 | Execução Profana 77/32/Undead; Dança das Sombras 76/30/Arcane |
 | Vanguard | 1 | Golpe Brutal 16/5/Bestial; Pisotão de Titan 12/4/Bestial |
 | Vanguard | 2 | Investida Feroz 32/10/Bestial; Corte Ossudo 29/9/Undead |
 | Vanguard | 3 | Impacto Titânico 56/18/Bestial; Lâmina do Encanto 50/16/Fairy |
-| Vanguard | 4 | Fúria Primordial 90/28/Bestial; Golpe Ruína Arcana 85/26/Arcane |
+| Vanguard | 4 | Fúria Primordial 81/28/Bestial; Golpe Ruína Arcana 77/26/Arcane |
 
 O motor valida `Energia >= Custo`, chama `GastarEnergia` e executa o golpe. `GastarEnergia` também protege a regra com `RegraDeJogoException`. MP é recuperado ao defender, por `PocaoEnergia` e integralmente ao subir de nível após uma vitória.
 
@@ -237,7 +238,7 @@ Os novos atributos afetam HP/MP máximos, ataque, iniciativa, defesa e fuga nas 
 
 ## 15. Inteligência do oponente
 
-O motor chama polimorficamente `Monstro.DecidirAcao(alvo, rodadaAtual)`. As estratégias variam: Spectrum sorteia confusão; Driade alterna aleatoriamente acima de 50% e fica ofensiva abaixo; Bugbear mede Fúria; PackAncient reage ao limiar de vida uma vez; Sentinel reage à barreira; Igris reage a vida, fase e barreira. Outros inimigos mantêm uma ação característica.
+O motor chama polimorficamente `Monstro.DecidirAcao(alvo, rodadaAtual)`. As estratégias variam: Spectrum sorteia confusão; Driade alterna aleatoriamente acima de 50% e fica ofensiva abaixo; Bugbear mede Fúria; PackAncient reage ao limiar de vida uma vez; Green Witch amaldiçoa uma vez e depois ataca; Sentinel usa `RompimentoArcano` sem barreira; Igris reage a vida, fase e barreira, cuja recarga só pode ocorrer uma vez. Outros inimigos mantêm uma ação característica.
 
 Não há lógica de cura por “vida baixa” nem validação/consumo de energia de monstro. Driade, Bugbear, PackAncient e Igris mudam o comportamento conforme vida/fase; os demais não. Quando existe aliado, `MotorDeTurnos.AcaoMonstro` escolhe jogador ou aliado com 50% cada. Portanto o conjunto de oponentes não depende apenas de aleatoriedade, embora Golem, GreenWitch, Zombie e Orcus escolham sempre a mesma ação. A ação `Defender` não faz parte de `AcaoDeMonstro`.
 
@@ -402,6 +403,7 @@ Não há chance de aplicação adicional para estados: quando uma ação de esta
 | Regra | Valor | Local |
 |---|---|---|
 | Dano mínimo | 1 | `CalculadoraDeDano.DanoMinimo` |
+| Progressão do ataque básico | `(Nivel - 1) × 3`: +0, +3, +6 e +9 | `MotorDeTurnos.IncrementoDanoBasicoPorNivel` |
 | Elemental | vantagem 1,5; resistência 0,5; neutro 1,0 | `TabelaElemental` |
 | Classe de Armadura | `Armadura + Reflexo / 2` com divisão inteira | `Personagem.ClasseDeArmadura` |
 | Defesa | 25% + 2% por Físico; máximo 40% | `Personagem` |
@@ -413,7 +415,8 @@ Não há chance de aplicação adicional para estados: quando uma ação de esta
 | Fuga | base 25%, +2% por Reflexo, máximo 40% | `Personagem` |
 | Reanimar | 15 MP; aliado a 50% | `Engineer`, `AliadoInvocado` |
 | Fases de Igris | 55% e 25% de HP | `Igris` |
-| Barreiras | máximo 35; recarga 10 | `Sentinel`, `Igris` |
+| Barreira de Igris | máximo 35; uma única recarga de 10 | `Igris` |
+| Ataques de Igris | multiplicador elemental neutro `1,0` | `MotorDeTurnos`, `CalculadoraDeDano` |
 | XP | `Nivel × 100 + (Nivel - 1) × 50` | `Personagem` |
 | Level up | +2/+1/+1/+1/+1 nos atributos | `Personagem.SubirDeNivel` |
 | Custos de habilidades | 4 a 42 MP, detalhados na seção 10 | Classes jogáveis |
@@ -486,16 +489,35 @@ Exemplo baseado nas regras, com números explicitamente hipotéticos quando o es
 
 **Qual foi a principal decisão de modelagem?** A principal decisão de modelagem foi representar todos os participantes por meio da classe abstrata `Personagem` e centralizar o fluxo do combate em `MotorDeTurnos`. Essa organização permitiu reutilizar regras de vida, energia, estados, inventário e progressão, mantendo os comportamentos específicos nas classes filhas. Também possibilitou separar o domínio, as regras de combate e a apresentação gráfica.
 
-## 27. Tecnologias utilizadas
+## 27. Registro de decisões
+
+### 1. Balanceamento do boss Igris
+
+Os ataques realizados por Igris usam multiplicador elemental neutro `1,0`. Essa decisão evita que a escolha inicial da classe torne o chefe final excessivamente fácil para Vanguard, que resiste a Arcane, ou excessivamente difícil para Engineer, que é vulnerável a Arcane. Igris continua pertencendo ao elemento Arcane, portanto vantagens e resistências ainda são consideradas nos ataques realizados pelo jogador contra ele. Assim, as escolhas elementais ofensivas continuam relevantes sem criar uma diferença extrema na sobrevivência das classes.
+
+### 2. Criação dos personagens jogáveis
+
+A distribuição dos pontos/atributos de cada personagem jogável é balanceada com orçamento de pontos igual — 20 ao total — distribuído conforme a identidade de cada uma. Dessa forma, nenhuma classe é estatisticamente “melhor”; cada uma apenas joga de maneira diferente.
+
+O orçamento considera a soma dos cinco atributos iniciais: `Fisico`, `Reflexo`, `Tecnica`, `Foco` e `Armadura`.
+
+| Classe | Distribuição inicial | Total |
+|---|---|---:|
+| `Engineer` | 3 + 3 + 8 + 3 + 3 | 20 |
+| `Arcanist` | 2 + 3 + 4 + 9 + 2 | 20 |
+| `Phantom` | 3 + 10 + 4 + 2 + 1 | 20 |
+| `Vanguard` | 8 + 3 + 2 + 2 + 5 | 20 |
+
+## 28. Tecnologias utilizadas
 
 - C# com nullable reference types e implicit usings;
 - .NET 10.0;
 - Raylib-cs 8.0.0 para interface gráfica;
-- recursos PNG e fontes TTF;
+- recursos PNG, fontes TTF e música OGG;
 - solução compatível com JetBrains Rider/MSBuild;
 - Git, presente no repositório.
 
-## 28. Autores e licença
+## 29. Autores e licença
 
 | Campo       | Preenchimento         |
 |-------------|-----------------------|
@@ -503,7 +525,13 @@ Exemplo baseado nas regras, com números explicitamente hipotéticos quando o es
 | Turma       | C#, +Devs2blu         |
 | Data        | Agosto, 2026          |
 
-## 29. Observações
+### Créditos de áudio
+
+| Recurso | Crédito |
+|---|---|
+| Música de fundo `A-Sweet-Goodye.ogg` | [CBsix — RPG Fantasy Music Pack](https://indieriffic.itch.io/rpg-fantasy-music-pack) |
+
+## 30. Observações
 
 - O projeto utiliza Raylib-cs 8.0.0 como biblioteca externa necessária à interface gráfica, conforme exigido pela proposta desta versão do ARISE.
 - Não há testes automatizados no único projeto da solução. Foram testados manualmente: entradas inválidas, itens com atributos cheios, inventário vazio/cheio e seleção inválida, habilidade sem MP, validações de reanimação, estados e expiração, drops, level up, escolha de habilidade, vitória, derrota e fuga. As transições de Igris foram verificadas apenas por inspeção do código.
