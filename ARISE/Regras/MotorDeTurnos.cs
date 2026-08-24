@@ -10,6 +10,8 @@ namespace ARISE.Regras;
 
 public class MotorDeTurnos
 {
+    private const int IncrementoDanoBasicoPorNivel = 3;
+
     public Personagem Jogador { get; }
     public Monstro MonstroAtual { get; }
 
@@ -231,7 +233,11 @@ public class MotorDeTurnos
     // Ações
 
     private static IHabilidade CriarAtaqueBasico(Personagem p)
-        => new HabilidadeAtaque("Ataque", danoBase: 0, custo: 0, elemento: p.Elemento);
+        => new HabilidadeAtaque(
+            "Ataque",
+            danoBase: (p.Nivel - 1) * IncrementoDanoBasicoPorNivel,
+            custo: 0,
+            elemento: p.Elemento);
 
     private void ExecutarAtaque(Personagem atacante, Personagem defensor, IHabilidade habilidade)
     {
@@ -247,11 +253,16 @@ public class MotorDeTurnos
         _logRodada.Add($"⚔️ {atacante.Nome} {textoAcao} {defensor.Nome} causando {danoFinal} de dano!{sufixoDefesa}");
 
         Elemento elementoEfetivo = habilidade.Elemento ?? atacante.Elemento;
-        double multiplicador = TabelaElemental.CalcularMultiplicador(elementoEfetivo, defensor.Elemento);
+        AdicionarMensagemEfetividade(elementoEfetivo, defensor.Elemento);
+    }
+
+    private void AdicionarMensagemEfetividade(Elemento elementoAtacante, Elemento elementoDefensor)
+    {
+        double multiplicador = TabelaElemental.CalcularMultiplicador(elementoAtacante, elementoDefensor);
         if (multiplicador > 1.0)
-            _logRodada.Add($" 🔥 SUPER EFETIVO! ({elementoEfetivo} > {defensor.Elemento}) | +50% de Dano!");
+            _logRodada.Add($" 🔥 SUPER EFETIVO! ({elementoAtacante} > {elementoDefensor}) | +50% de Dano!");
         else if (multiplicador < 1.0)
-            _logRodada.Add($" 🛡️ POUCO EFETIVO... ({elementoEfetivo} < {defensor.Elemento}) | -50% de Dano!");
+            _logRodada.Add($" 🛡️ POUCO EFETIVO... ({elementoAtacante} < {elementoDefensor}) | -50% de Dano!");
     }
 
     private bool AcaoJogador(AcaoDoJogador acao, IHabilidade? habilidade, int indiceItem)
@@ -348,11 +359,18 @@ public class MotorDeTurnos
         string nomeAlvoExibicao = (alvoEscolhido == Jogador) ? "você" : alvoEscolhido.Nome;
         bool alvoEstaDefendendo = alvoEscolhido.TemEstado(TipoEstado.Defendendo);
         string sufixo = alvoEstaDefendendo ? " (reduzido pela defesa)" : "";
+        bool ataqueCausouDano = false;
 
         int CalcularDanoBase(float multiplicador = 1f)
         {
+            ataqueCausouDano = true;
             var habilidadeMonstro = new HabilidadeAtaque("Ataque", danoBase: 0, custo: 0, elemento: MonstroAtual.Elemento);
-            int dano = CalculadoraDeDano.CalcularDano(habilidadeMonstro, MonstroAtual, alvoEscolhido);
+            bool aplicarElemento = MonstroAtual is not Igris;
+            int dano = CalculadoraDeDano.CalcularDano(
+                habilidadeMonstro,
+                MonstroAtual,
+                alvoEscolhido,
+                aplicarMultiplicadorElemental: aplicarElemento);
             if (alvoEscolhido.TemEstado(TipoEstado.Enfraquecido))
                 dano = (int)(dano * MultiplicadoresDeAtaque.DanoAlvoEnfraquecido);
             return (int)(dano * multiplicador);
@@ -462,6 +480,9 @@ public class MotorDeTurnos
                 break;
             }
         }
+
+        if (ataqueCausouDano && MonstroAtual is not Igris)
+            AdicionarMensagemEfetividade(MonstroAtual.Elemento, alvoEscolhido.Elemento);
 
         if (aliadoPresente && Jogador.AliadoAtivo != null && !Jogador.AliadoAtivo.EstaVivo())
         {

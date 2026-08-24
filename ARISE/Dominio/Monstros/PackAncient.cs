@@ -9,7 +9,7 @@ public class PackAncient : Monstro
 {
     private const int LimiarDeVidaBaixa = 40;
 
-    protected override int VidaBaseClasse => 80;
+    protected override int VidaBaseClasse => 60;
     protected override int EnergiaBaseClasse => 15;
     public override int AtributoDeAtaque => Fisico;
     public override Rank Rank => Rank.B;

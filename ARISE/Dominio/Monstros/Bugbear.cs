@@ -9,7 +9,7 @@ public class Bugbear : Monstro
 {
     private const int LimiarDeFuria = 60;
 
-    protected override int VidaBaseClasse => 35;
+    protected override int VidaBaseClasse => 30;
     protected override int EnergiaBaseClasse => 8;
     public override int AtributoDeAtaque => Fisico;
     public override Rank Rank => Rank.C;

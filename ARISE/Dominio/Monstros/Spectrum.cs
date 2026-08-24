@@ -10,7 +10,7 @@ public class Spectrum : Monstro
 {
     private const int FatorDeConversaoIlusao = 4;
 
-    protected override int VidaBaseClasse => 18;
+    protected override int VidaBaseClasse => 16;
     protected override int EnergiaBaseClasse => 10;
     public override int AtributoDeAtaque => Foco;
     public override Rank Rank => Rank.E;

@@ -10,7 +10,7 @@ public class Driade : Monstro
 {
     private const int LimiarDeVidaBaixa = 50;
 
-    protected override int VidaBaseClasse => 55;
+    protected override int VidaBaseClasse => 48;
     protected override int EnergiaBaseClasse => 20;
     public override int AtributoDeAtaque => Foco;
     public override Rank Rank => Rank.C;

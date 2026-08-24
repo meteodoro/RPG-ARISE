@@ -22,6 +22,8 @@ public static class JogoRaylib
     private static string caminhoTexturaCarregada = "";
     private static Font fonteEmoji;
     private static Font fonteTexto;
+    private static Music musicaFundo;
+    private static bool musicaFundoCarregada;
 
     private static Texture2D texturaCapa;
     private static Texture2D texturaClasse;
@@ -51,12 +53,22 @@ public static class JogoRaylib
     public static void Executar()
     {
         Raylib.InitWindow(1280, 720, "★ ARISE: THE DUNGEON CRAWLER ★");
+        Raylib.InitAudioDevice();
         Raylib.SetTargetFPS(60);
 
-        string caminhoFonteEmoji = ResolverCaminhoImagem("Fontes/NotoEmoji-VariableFont_wght.ttf")
+        string caminhoFonteEmoji = ResolverCaminhoRecurso("Fontes/NotoEmoji-VariableFont_wght.ttf")
                                    ?? @"C:\Windows\Fonts\seguiemj.ttf";
-        string caminhoFonteTexto = ResolverCaminhoImagem("Fontes/Alegreya.bold.ttf")
+        string caminhoFonteTexto = ResolverCaminhoRecurso("Fontes/Alegreya.bold.ttf")
                                    ?? @"C:\Windows\Fonts\seguiemj.ttf";
+
+        string? caminhoMusica = ResolverCaminhoRecurso("Musicas/A-Sweet-Goodye.ogg");
+        if (caminhoMusica != null)
+        {
+            musicaFundo = Raylib.LoadMusicStream(caminhoMusica);
+            Raylib.SetMusicVolume(musicaFundo, 0.25f);
+            Raylib.PlayMusicStream(musicaFundo);
+            musicaFundoCarregada = true;
+        }
 
         if (System.IO.File.Exists(caminhoFonteEmoji))
         {
@@ -91,6 +103,9 @@ public static class JogoRaylib
 
         while (!Raylib.WindowShouldClose())
         {
+            if (musicaFundoCarregada)
+                Raylib.UpdateMusicStream(musicaFundo);
+
             float deltaTime = Raylib.GetFrameTime();
             Atualizar(deltaTime);
 
@@ -104,6 +119,12 @@ public static class JogoRaylib
         if (texturaCapa.Id != 0) Raylib.UnloadTexture(texturaCapa);
         if (texturaClasse.Id != 0) Raylib.UnloadTexture(texturaClasse);
         LimparTexturaMonstro();
+        if (musicaFundoCarregada)
+        {
+            Raylib.StopMusicStream(musicaFundo);
+            Raylib.UnloadMusicStream(musicaFundo);
+        }
+        Raylib.CloseAudioDevice();
         Raylib.CloseWindow();
     }
 
@@ -422,7 +443,7 @@ public static class JogoRaylib
 
         LimparTexturaMonstro();
 
-        string? caminhoResolvido = ResolverCaminhoImagem(caminho);
+        string? caminhoResolvido = ResolverCaminhoRecurso(caminho);
         if (caminhoResolvido != null)
         {
             texturaMonstroAtual = Raylib.LoadTexture(caminhoResolvido);
@@ -430,7 +451,7 @@ public static class JogoRaylib
         }
     }
 
-    private static string? ResolverCaminhoImagem(string caminhoRelativo)
+    private static string? ResolverCaminhoRecurso(string caminhoRelativo)
     {
         if (string.IsNullOrEmpty(caminhoRelativo)) return null;
 
@@ -526,17 +547,17 @@ public static class JogoRaylib
                 for (int i = 0; i < habilidadesAprender.Count; i++)
                 {
                     var h = habilidadesAprender[i];
-                    DesenharTextoMisto($"[{i + 1}] 📜 {h.Nome} (Dano: {h.DanoBase} | Custo: {h.Custo} MP)", new Vector2(420, 250 + (i * 50)), 22, 1, Color_Raylib.White);
+                    DesenharTextoMisto($"[{i + 1}] 📜 {h.Nome} (Dano: {h.DanoBase} | Custo: {h.Custo} MP | Elemento: {h.Elemento})", new Vector2(420, 250 + (i * 50)), 22, 1, Color_Raylib.White);
                 }
                 break;
 
             case EstadoJogo.VitoriaFinal:
-                DesenharTextoMisto("🏆 PARABÉNS! VOCÊ ZEROU A DUNGEON E DERROTOU IGRIS!", new Vector2(200, 320), 28, 1, Color_Raylib.Gold);
+                DesenharTextoMisto("🏆 PARABÉNS! VOCÊ ZEROU A DUNGEON E DERROTOU IGRIS!", new Vector2(300, 320), 28, 1, Color_Raylib.Gold);
                 break;
 
             case EstadoJogo.FimDeJogo:
                 if (motor != null && motor.JogadorFugiu)
-                    DesenharTextoMisto("🏃 Você fugiu da Dungeon!", new Vector2(420, 320), 32, 1, Color_Raylib.Gold);
+                    DesenharTextoMisto("🏃 Você fugiu da Dungeon!", new Vector2(450, 320), 32, 1, Color_Raylib.Gold);
                 else
                     DesenharTextoMisto("☠️ VOCÊ MORREU! Fim de jogo.", new Vector2(450, 320), 32, 1, Color_Raylib.Red);
                 break;
@@ -614,6 +635,15 @@ public static class JogoRaylib
         DesenharTextoMisto($"⚠️ {monstroAtual.Nome} - {monstroAtual.Elemento} (Rank {monstroAtual.Rank})", new Vector2(875, 50), 28, 1, Color_Raylib.Red);
         DesenharTextoMisto($"HP: {monstroAtual.Vida}/{monstroAtual.VidaMaxima}", new Vector2(875, 90), 22, 1, Color_Raylib.White);
         DesenharBarra(1000, 90, 220, 16, monstroAtual.Vida, monstroAtual.VidaMaxima, Color_Raylib.Red);
+
+        int? escudoAtual = monstroAtual is Igris igris ? igris.EscudoDeBarreira : null;
+
+        if (escudoAtual.HasValue)
+        {
+            const int escudoMaximo = 35;
+            DesenharTextoMisto($"Escudo: {escudoAtual}/{escudoMaximo}", new Vector2(875, 120), 20, 1, Color_Raylib.SkyBlue);
+            DesenharBarra(1000, 120, 220, 14, escudoAtual.Value, escudoMaximo, Color_Raylib.SkyBlue);
+        }
 
         Raylib.DrawRectangle(40, 480, 1200, 200, new Color_Raylib(25, 25, 35, 240));
         Raylib.DrawRectangleLines(40, 480, 1200, 200, Color_Raylib.Gray);

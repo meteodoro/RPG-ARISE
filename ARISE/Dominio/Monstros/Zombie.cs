@@ -9,7 +9,7 @@ public class Zombie : Monstro
 {
     private const int FatorDeConversaoContagio = 10;
 
-    protected override int VidaBaseClasse => 24;
+    protected override int VidaBaseClasse => 22;
     protected override int EnergiaBaseClasse => 5;
     public override int AtributoDeAtaque => Fisico;
     public override Rank Rank => Rank.E;

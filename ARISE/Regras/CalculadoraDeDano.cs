@@ -10,11 +10,17 @@ public static class CalculadoraDeDano
     private const int VariacaoMinima = -2;
     private const int VariacaoMaxima = 2;
 
-    public static int CalcularDano(IHabilidade habilidade, Personagem atacante, IAtacavel alvo)
+    public static int CalcularDano(
+        IHabilidade habilidade,
+        Personagem atacante,
+        IAtacavel alvo,
+        bool aplicarMultiplicadorElemental = true)
     {
         Elemento elementoEfetivo = habilidade.Elemento ?? atacante.Elemento;
         int danoBase = habilidade.DanoBase + atacante.AtributoDeAtaque;
-        double multiplicadorElemental = TabelaElemental.CalcularMultiplicador(elementoEfetivo, alvo.Elemento);
+        double multiplicadorElemental = aplicarMultiplicadorElemental
+            ? TabelaElemental.CalcularMultiplicador(elementoEfetivo, alvo.Elemento)
+            : 1.0;
         
         if (alvo.TemEstado(TipoEstado.Defendendo))
         {

@@ -7,7 +7,7 @@ namespace ARISE.Dominio.Monstros;
 // Elemento Arcane, Rank D, sempre ataca com raio de energia
 public class Golem : Monstro
 {
-    protected override int VidaBaseClasse => 45;
+    protected override int VidaBaseClasse => 40;
     protected override int EnergiaBaseClasse => 18;
     public override int AtributoDeAtaque => Fisico;
     public override Rank Rank => Rank.D;

@@ -12,7 +12,7 @@ public class Igris : Monstro
     private const int LimiarDeFaseIntermediaria = 55;
     private const int LimiarDeFaseFinal = 25;
 
-    protected override int VidaBaseClasse => 400;
+    protected override int VidaBaseClasse => 175;
     protected override int EnergiaBaseClasse => 50;
     public override int AtributoDeAtaque => Tecnica;
     public override Rank Rank => Rank.S;
@@ -20,6 +20,7 @@ public class Igris : Monstro
 
     public int EscudoDeBarreira { get; protected set; } = EscudoMaximo;
     public int Fase { get; private set; } = 1;
+    public bool JaRecarregouEscudo { get; private set; }
 
     public Igris(string nome)
     {
@@ -29,7 +30,7 @@ public class Igris : Monstro
         Reflexo = 22;
         Tecnica = 20;
         Foco = 22;
-        Armadura = 12;
+        Armadura = 10;
         InicializarVitalidade();
         
         TabelaDeDrops = new List<EntradaDeDrop>
@@ -72,9 +73,12 @@ public class Igris : Monstro
             return AcaoDeMonstro.TransicaoIntermediaria; 
         }
 
-        // Se o escudo quebrar (zerar), ele usa a ação de recarregar
-        if (EscudoDeBarreira <= 0) 
+        // A barreira pode ser recarregada apenas uma vez durante o combate
+        if (EscudoDeBarreira <= 0 && !JaRecarregouEscudo)
+        {
+            JaRecarregouEscudo = true;
             return AcaoDeMonstro.RecarregarEscudo;
+        }
 
         // Ataques baseados na fase atual enquanto tem escudo
         return Fase switch

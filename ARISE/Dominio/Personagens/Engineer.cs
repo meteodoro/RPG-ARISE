@@ -53,8 +53,8 @@ public class Engineer : Personagem
             },
             4 => new List<IHabilidade>
             {
-                new HabilidadeAtaque("Canhão Arcano", danoBase: 80, custo: 40, Elemento.Arcane),
-                new HabilidadeAtaque("Fúria da Invocação", danoBase: 85, custo: 42, Elemento.Bestial)
+                new HabilidadeAtaque("Canhão Arcano", danoBase: 72, custo: 40, Elemento.Arcane),
+                new HabilidadeAtaque("Fúria da Invocação", danoBase: 77, custo: 42, Elemento.Bestial)
             },
             _ => new List<IHabilidade>()
         };

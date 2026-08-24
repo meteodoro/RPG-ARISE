@@ -17,7 +17,7 @@ public class Arcanist : Personagem
         Fisico = 2;
         Reflexo = 3;
         Tecnica = 4;
-        Foco = 8;
+        Foco = 9;
         Armadura = 2;
         InicializarVitalidade();
 
@@ -43,8 +43,8 @@ public class Arcanist : Personagem
             },
             4 => new List<IHabilidade>
             {
-                new HabilidadeAtaque("Singularidade Arcana", danoBase: 88, custo: 42, Elemento.Arcane),
-                new HabilidadeAtaque("Furia Quimérica", danoBase: 82, custo: 38, Elemento.Bestial)
+                new HabilidadeAtaque("Singularidade Arcana", danoBase: 79, custo: 42, Elemento.Arcane),
+                new HabilidadeAtaque("Furia Quimérica", danoBase: 74, custo: 38, Elemento.Bestial)
             },
             _ => new List<IHabilidade>()
         };

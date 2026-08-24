@@ -7,7 +7,7 @@ namespace ARISE.Dominio.Monstros;
 // Elemento Undead, Rank B, sempre ataca drenando o alvo (e o próprio Orcus recupera parte desse dano como vida)
 public class Orcus : Monstro
 {
-    protected override int VidaBaseClasse => 100;
+    protected override int VidaBaseClasse => 75;
     protected override int EnergiaBaseClasse => 15;
     public override int AtributoDeAtaque => Fisico;
     public override Rank Rank => Rank.B;

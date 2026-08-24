@@ -15,8 +15,8 @@ public class Phantom : Personagem
         Nome = nome;
         Elemento = Elemento.Undead;
         Fisico = 3;
-        Reflexo = 9;
-        Tecnica = 3;
+        Reflexo = 10;
+        Tecnica = 4;
         Foco = 2;
         Armadura = 1;
         InicializarVitalidade();
@@ -45,8 +45,8 @@ public class Phantom : Personagem
             },
             4 => new List<IHabilidade>
             {
-                new HabilidadeAtaque("Execução Profana", danoBase: 86, custo: 38, Elemento.Undead),
-                new HabilidadeAtaque("Dança das Sombras", danoBase: 84, custo: 36, Elemento.Arcane)
+                new HabilidadeAtaque("Execução Profana", danoBase: 77, custo: 32, Elemento.Undead),
+                new HabilidadeAtaque("Dança das Sombras", danoBase: 76, custo: 30, Elemento.Arcane)
             },
             _ => new List<IHabilidade>()
         };

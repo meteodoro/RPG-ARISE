@@ -28,7 +28,7 @@ public static class FabricaDungeon
             }),
             ("DESAFIO FINAL", new List<Func<Monstro>>
             {
-                () => new Igris("BOSS FINAL IGRIS")
+                () => new Igris("BOSS IGRIS")
             })
         };
     }

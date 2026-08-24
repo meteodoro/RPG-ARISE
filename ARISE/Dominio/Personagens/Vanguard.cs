@@ -45,8 +45,8 @@ public class Vanguard : Personagem
             },
             4 => new List<IHabilidade>
             {
-                new HabilidadeAtaque("Fúria Primordial", danoBase: 90, custo: 28, Elemento.Bestial),
-                new HabilidadeAtaque("Golpe Ruína Arcana", danoBase: 85, custo: 26, Elemento.Arcane)
+                new HabilidadeAtaque("Fúria Primordial", danoBase: 81, custo: 28, Elemento.Bestial),
+                new HabilidadeAtaque("Golpe Ruína Arcana", danoBase: 77, custo: 26, Elemento.Arcane)
             },
             _ => new List<IHabilidade>()
         };

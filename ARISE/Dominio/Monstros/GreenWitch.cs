@@ -7,11 +7,12 @@ namespace ARISE.Dominio.Monstros;
 // Elemento Fairy, Rank B, sempre ataca com maldição enfraquecedora
 public class GreenWitch : Monstro
 {
-    protected override int VidaBaseClasse => 85;
+    protected override int VidaBaseClasse => 65;
     protected override int EnergiaBaseClasse => 25;
     public override int AtributoDeAtaque => Foco;
     public override Rank Rank => Rank.B;
     public override int ExperienciaConcedida => 150;
+    public bool JaAmaldicoou { get; private set; }
 
     public GreenWitch(string nome)
     {
@@ -33,6 +34,14 @@ public class GreenWitch : Monstro
 
     }
 
-    public override AcaoDeMonstro DecidirAcao(Personagem alvo, int rodadaAtual) 
-        => AcaoDeMonstro.MaldicaoEnfraquecedora;
+    public override AcaoDeMonstro DecidirAcao(Personagem alvo, int rodadaAtual)
+    {
+        if (!JaAmaldicoou)
+        {
+            JaAmaldicoou = true;
+            return AcaoDeMonstro.MaldicaoEnfraquecedora;
+        }
+
+        return AcaoDeMonstro.AtaqueBasico;
+    }
 }
