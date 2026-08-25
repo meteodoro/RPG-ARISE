@@ -31,7 +31,7 @@ public class PackAncient : Monstro
         TabelaDeDrops = new List<EntradaDeDrop>
         {
             new(new PocaoEnergia("Poção de Energia Grande", 35), 80),
-            new(new PocaoVida("Poção de Vida Grande", 50), 10),
+            new(new PocaoVida("Poção de Vida Grande", 40), 10),
             new(null, 10) 
         };
         CaminhoImagem = "Imagens/packancient.png";

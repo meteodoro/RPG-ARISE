@@ -35,7 +35,7 @@ public class Igris : Monstro
         
         TabelaDeDrops = new List<EntradaDeDrop>
         {
-            new(new PocaoVida("Elixir Divino", 200), 80),
+            new(new PocaoVida("Elixir Divino", 190), 80),
             new(null, 20) 
         };
         CaminhoImagem = "Imagens/igris.png";

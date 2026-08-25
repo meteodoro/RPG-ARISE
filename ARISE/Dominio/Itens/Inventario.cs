@@ -14,8 +14,8 @@ public class Inventario
         CapacidadeMaxima = capacidadeMaxima;
         Itens = new List<Item>();
         
-        AdicionarItem(new PocaoVida("Poção de Vida Pequena", 30));
-        AdicionarItem(new PocaoVida("Poção de Vida Pequena", 30));
+        AdicionarItem(new PocaoVida("Poção de Vida Pequena", 20));
+        AdicionarItem(new PocaoVida("Poção de Vida Pequena", 20));
     }
 
     public bool AdicionarItem(Item item)

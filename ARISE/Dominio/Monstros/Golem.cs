@@ -26,7 +26,7 @@ public class Golem : Monstro
         
         TabelaDeDrops = new List<EntradaDeDrop>
         {
-            new(new PocaoVida("Poção de Vida Média", 40), 45),
+            new(new PocaoVida("Poção de Vida Média", 30), 45),
             new(new PocaoEnergia("Poção de Energia Média", 25), 35),
             new(null, 20) 
         };

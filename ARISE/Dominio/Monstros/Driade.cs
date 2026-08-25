@@ -29,7 +29,7 @@ public class Driade : Monstro
         
         TabelaDeDrops = new List<EntradaDeDrop>
         {
-            new(new PocaoVida("Poção de Vida Média", 40), 100)
+            new(new PocaoVida("Poção de Vida Média", 30), 100)
         };
         
         CaminhoImagem = "Imagens/driade.png";

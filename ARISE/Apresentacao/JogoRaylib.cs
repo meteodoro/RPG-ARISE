@@ -43,6 +43,7 @@ public static class JogoRaylib
     private static float timerTransicao = 0f;
 
     private static string nomeDigitado = "";
+    private static Personagem? classeSelecionada;
 
     private static float CalcularTempoDeLeitura()
     {
@@ -142,10 +143,23 @@ public static class JogoRaylib
                 break;
 
             case EstadoJogo.CriacaoPersonagem:
-                if (Raylib.IsKeyPressed(KeyboardKey.One)) { jogador = new Engineer(nomeDigitado); ProximaFase(); }
-                if (Raylib.IsKeyPressed(KeyboardKey.Two)) { jogador = new Arcanist(nomeDigitado); ProximaFase(); }
-                if (Raylib.IsKeyPressed(KeyboardKey.Three)) { jogador = new Phantom(nomeDigitado); ProximaFase(); }
-                if (Raylib.IsKeyPressed(KeyboardKey.Four)) { jogador = new Vanguard(nomeDigitado); ProximaFase(); }
+                if (classeSelecionada == null)
+                {
+                    if (Raylib.IsKeyPressed(KeyboardKey.One)) classeSelecionada = new Engineer(nomeDigitado);
+                    if (Raylib.IsKeyPressed(KeyboardKey.Two)) classeSelecionada = new Arcanist(nomeDigitado);
+                    if (Raylib.IsKeyPressed(KeyboardKey.Three)) classeSelecionada = new Phantom(nomeDigitado);
+                    if (Raylib.IsKeyPressed(KeyboardKey.Four)) classeSelecionada = new Vanguard(nomeDigitado);
+                }
+                else if (Raylib.IsKeyPressed(KeyboardKey.Zero))
+                {
+                    classeSelecionada = null;
+                }
+                else if (Raylib.IsKeyPressed(KeyboardKey.Enter))
+                {
+                    jogador = classeSelecionada;
+                    classeSelecionada = null;
+                    ProximaFase();
+                }
                 break;
 
             case EstadoJogo.EntrandoFase:
@@ -512,6 +526,9 @@ public static class JogoRaylib
                 Raylib.DrawTextEx(fonteTexto, "[2] Arcanist (Mestre do Dano Elemental Mágico)", new Vector2(380, 590), 30, 1, Color_Raylib.RayWhite);
                 Raylib.DrawTextEx(fonteTexto, "[3] Phantom (Assassino Furtivo de Alto Reflexo)", new Vector2(380, 630), 30, 1, Color_Raylib.RayWhite);
                 Raylib.DrawTextEx(fonteTexto, "[4] Vanguard (Tanque de Força Bruta e Alta Armadura)", new Vector2(380, 670), 30, 1, Color_Raylib.RayWhite);
+
+                if (classeSelecionada != null)
+                    DesenharQuadroDaClasse(classeSelecionada);
                 break;
 
             case EstadoJogo.EntrandoFase:
@@ -724,6 +741,47 @@ public static class JogoRaylib
         float porcentagem = Math.Clamp((float)valorAtual / valorMaximo, 0f, 1f);
         Raylib.DrawRectangle(x, y, (int)(largura * porcentagem), altura, cor);
         Raylib.DrawRectangleLines(x, y, largura, altura, Color_Raylib.LightGray);
+    }
+
+    private static void DesenharQuadroDaClasse(Personagem classe)
+    {
+        const int x = 365;
+        const int y = 105;
+        const int largura = 550;
+        const int altura = 500;
+
+        Raylib.DrawRectangle(0, 0, 1280, 720, new Color_Raylib(0, 0, 0, 150));
+        Raylib.DrawRectangle(x, y, largura, altura, new Color_Raylib(18, 13, 29, 245));
+        Raylib.DrawRectangleLinesEx(new Rectangle(x, y, largura, altura), 3f, Color_Raylib.Magenta);
+
+        string nomeClasse = classe.GetType().Name.ToUpperInvariant();
+        DesenharTextoCentralizado(nomeClasse, y + 25, 38, Color_Raylib.Magenta);
+        DesenharTextoCentralizado($"ELEMENTO: {classe.Elemento}", y + 75, 25, Color_Raylib.Gold);
+
+        int colunaEsquerda = x + 55;
+        int colunaDireita = x + 300;
+        int linhaInicial = y + 135;
+        const int espacamentoLinha = 42;
+
+        DesenharTextoMisto($"VIDA: {classe.VidaMaxima}", new Vector2(colunaEsquerda, linhaInicial), 27, 1, Color_Raylib.RayWhite);
+        DesenharTextoMisto($"ENERGIA: {classe.EnergiaMaxima}", new Vector2(colunaDireita, linhaInicial), 27, 1, Color_Raylib.RayWhite);
+        DesenharTextoMisto($"FÍSICO: {classe.Fisico}", new Vector2(colunaEsquerda, linhaInicial + espacamentoLinha), 27, 1, Color_Raylib.RayWhite);
+        DesenharTextoMisto($"REFLEXO: {classe.Reflexo}", new Vector2(colunaDireita, linhaInicial + espacamentoLinha), 27, 1, Color_Raylib.RayWhite);
+        DesenharTextoMisto($"TÉCNICA: {classe.Tecnica}", new Vector2(colunaEsquerda, linhaInicial + espacamentoLinha * 2), 27, 1, Color_Raylib.RayWhite);
+        DesenharTextoMisto($"FOCO: {classe.Foco}", new Vector2(colunaDireita, linhaInicial + espacamentoLinha * 2), 27, 1, Color_Raylib.RayWhite);
+        DesenharTextoMisto($"ARMADURA: {classe.Armadura}", new Vector2(colunaEsquerda, linhaInicial + espacamentoLinha * 3), 27, 1, Color_Raylib.RayWhite);
+
+        string atributoAtaque = classe switch
+        {
+            Engineer => $"TÉCNICA ({classe.AtributoDeAtaque})",
+            Arcanist => $"FOCO ({classe.AtributoDeAtaque})",
+            Phantom => $"REFLEXO ({classe.AtributoDeAtaque})",
+            Vanguard => $"FÍSICO ({classe.AtributoDeAtaque})",
+            _ => classe.AtributoDeAtaque.ToString()
+        };
+
+        DesenharTextoCentralizado($"ATRIBUTO DE ATAQUE: {atributoAtaque}", y + 325, 26, Color_Raylib.Gold);
+        DesenharTextoCentralizado("[ENTER] CONFIRMAR     [0] VOLTAR", y + 435, 25, Color_Raylib.White);
     }
 
     private static void DesenharImagemMonstroCentralizada(float larguraDesejada, float alturaDesejada)

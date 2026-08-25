@@ -6,7 +6,7 @@ public class PocaoVida : Item
 {
     public int QuantidadeCura { get; private set; }
 
-    public PocaoVida(string nome = "Pocao de Vida P", int quantidadeCura = 30) 
+    public PocaoVida(string nome = "Pocao de Vida P", int quantidadeCura = 20) 
         : base(nome, $"Restaura {quantidadeCura} de HP")
     {
         QuantidadeCura = quantidadeCura;

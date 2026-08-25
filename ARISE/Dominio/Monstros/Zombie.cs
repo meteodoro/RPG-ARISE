@@ -31,7 +31,7 @@ public class Zombie : Monstro
         
         TabelaDeDrops = new List<EntradaDeDrop>
         {
-            new(new PocaoVida("Poção de Vida Pequena", 30), 30),
+            new(new PocaoVida("Poção de Vida Pequena", 20), 30),
             new(null, 70) 
         };
         CaminhoImagem = "Imagens/zombie.png";

@@ -26,7 +26,7 @@ public class Sentinel : Monstro
 
         TabelaDeDrops = new List<EntradaDeDrop>
         {
-            new(new PocaoVida("Elixir Vital Supremo", 100), 90),
+            new(new PocaoVida("Elixir Vital Supremo", 90), 90),
             new(null, 10)
         };
         CaminhoImagem = "Imagens/sentinel.png";
