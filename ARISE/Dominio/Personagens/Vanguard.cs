@@ -26,9 +26,6 @@ public class Vanguard : Personagem
         AdicionarHabilidadeInicial(new HabilidadeAtaque("Pisotão de Titan", danoBase: 12, custo: 4, Elemento.Bestial));
     }
 
-    /// <summary>
-    /// Retorna 2 opções de habilidades de impacto/combate para o jogador escolher ao subir de nível.
-    /// </summary>
     public override List<IHabilidade> ObterOpcoesDeHabilidadesPorNivel(int nivel)
     {
         return nivel switch

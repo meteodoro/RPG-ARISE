@@ -26,9 +26,6 @@ public class Phantom : Personagem
         AdicionarHabilidadeInicial(new HabilidadeAtaque("Passo Espectral", danoBase: 12, custo: 6, Elemento.Arcane));
     }
 
-    /// <summary>
-    /// Retorna 2 opções de habilidades assassinas/espectrais para o jogador escolher ao subir de nível.
-    /// </summary>
     public override List<IHabilidade> ObterOpcoesDeHabilidadesPorNivel(int nivel)
     {
         return nivel switch

@@ -34,9 +34,6 @@ public class Engineer : Personagem
     }
     
 
-    /// <summary>
-    /// Retorna 2 opções de habilidades para o jogador escolher ao subir para o nível indicado.
-    /// </summary>
     public override List<IHabilidade> ObterOpcoesDeHabilidadesPorNivel(int nivel)
     {
         return nivel switch

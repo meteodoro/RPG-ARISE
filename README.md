@@ -2,8 +2,6 @@
 
 ARISE é um RPG gráfico de progressão em que o jogador escolhe uma classe, atravessa níveis de uma masmorra e enfrenta inimigos em batalhas por turnos até o confronto final com Igris. O projeto se inspira em RPGs de progressão e exploração de masmorras: vitórias concedem experiência, possíveis itens e novas habilidades. Foi desenvolvido em C# com Programação Orientada a Objetos (POO) e usa uma janela gráfica criada com Raylib-cs.
 
-> Este documento foi revisado e descreve o estado atual do projeto, conforme o código-fonte e as funcionalidades validadas.
-
 ## 2. Informações acadêmicas
 
 | Campo | Informação |
